@@ -6,7 +6,7 @@ import gql from "graphql-tag"
 
 
 const client = new ApolloClient({
-  uri: host
+  uri: host + '/graphql'
 });
 
 client
