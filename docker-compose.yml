@@ -8,5 +8,5 @@ services:
     environment:
       FLASK_DEBUG: 1
       FLASK_APP: app
-    #volumes:
-    #  - $PWD/app:/reform-api/app
+    volumes:
+      - $PWD/api/app:/reform-api/app
