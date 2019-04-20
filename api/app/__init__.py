@@ -6,4 +6,5 @@ def create_app():
     @app.route("/")
     def hello_world():
         return "Hello World!"
+
     return app
