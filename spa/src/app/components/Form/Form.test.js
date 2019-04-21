@@ -14,12 +14,10 @@ const setup = ({ heading, saveForm }) => {
   )
 
   const emailInput = utils.getByTestId(/Email/i)
-  const passwordInput = utils.getByTestId(/Password/i)
   const saveButton = utils.getByText(/Save/i)
 
   return {
     emailInput,
-    passwordInput,
     saveButton,
     ...utils,
   }
@@ -38,15 +36,6 @@ it('will allow email input', async () => {
   fireEvent.change(emailInput, { target: { value: 'Abc' } })
 
   expect(emailInput.value).toBe('Abc')
-})
-
-it('will allow password input', async () => {
-
-  const { passwordInput } = setup({})
-
-  fireEvent.change(passwordInput, { target: { value: 'Abc' } })
-
-  expect(passwordInput.value).toBe('Abc')
 })
 
 it('will not allow saving empty form', async () => {
@@ -72,10 +61,9 @@ it('will not allow saving partial form', async () => {
 it('will allow saving complete form', async () => {
 
   const saveForm = jest.fn()
-  const { saveButton, emailInput, passwordInput } = setup({ saveForm })
+  const { saveButton, emailInput } = setup({ saveForm })
 
   fireEvent.change(emailInput, { target: { value: 'Abc' } })
-  fireEvent.change(passwordInput, { target: { value: 'Abc' } })
 
   fireEvent.click(saveButton)
   expect(saveForm).toHaveBeenCalled()
@@ -85,10 +73,9 @@ it('will render validation errors', async () => {
 
   const saveForm = (data, onError) => onError(['error123'])
 
-  const { saveButton, emailInput, passwordInput, getByText } = setup({ saveForm })
+  const { saveButton, emailInput, getByText } = setup({ saveForm })
 
   fireEvent.change(emailInput, { target: { value: 'Abc' } })
-  fireEvent.change(passwordInput, { target: { value: 'Abc' } })
 
   fireEvent.click(saveButton)
   await waitForElement(() => getByText(/error123/i))

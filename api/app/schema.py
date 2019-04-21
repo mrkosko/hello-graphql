@@ -3,17 +3,17 @@ import uuid
 
 db = {}
 db['users'] = [{**user, 'id': str(uuid.uuid4())}
-for user in [
+               for user in [
     {
-        'username': 'Royston',
+        'email': 'Royston@a.com',
         'password': 'hash'
     },
     {
-        'username': 'Korede',
+        'email': 'Korede@b.com',
         'password': 'hash'
     },
     {
-        'username': 'Toyosi',
+        'email': 'Toyosi@c.com',
         'password': 'hash'
     }
 ]]
@@ -21,7 +21,7 @@ for user in [
 
 class User(graphene.ObjectType):
     _id = graphene.ID()
-    username = graphene.String()
+    email = graphene.String()
 
 
 class CreateUser(graphene.Mutation):
@@ -35,15 +35,15 @@ class CreateUser(graphene.Mutation):
     def mutate(self, info, user_name, password):
         new_user = {
             'id': str(uuid.uuid4()),
-            'username': user_name,
+            'email': user_name,
             'password': password
-        } 
+        }
 
         db['users'].append(new_user)
 
         return CreateUser(
             _id=new_user['id'],
-            user_name=new_user['username']
+            user_name=new_user['email']
         )
 
 
@@ -66,12 +66,12 @@ class UsersQuery(graphene.ObjectType):
 
         if _id:
             return [
-                User(_id=user['id'], username=user['username']) 
+                User(_id=user['id'], email=user['email'])
                 for user in db['users']
                 if user['id'] == _id
             ]
 
-        return [User(_id=user['id'], username=user['username']) for user in db['users']]
+        return [User(_id=user['id'], email=user['email']) for user in db['users']]
 
 
 class RootQuery(UsersQuery):

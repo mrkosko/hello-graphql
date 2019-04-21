@@ -13,7 +13,7 @@ const setup = ({ users }) => {
   }
 }
 
-const aUser = { email: 'm@a.com', password: 'pass@t' };
+const aUser = { email: 'm@a.com', Id: 'pass@t' };
 
 it('will correctly render user item', async () => {
   const { getByText } = setup({ users: [aUser] })

@@ -35,10 +35,8 @@ const Form = ({ heading, saveForm }) => {
   const [messages, setMessages] = useState([])
   const [email, setEmail] = useState("")
 
-  const [password, setPassword] = useState("")
-
   const isFormValid = () => {
-    if (!!email && !!password) {
+    if (!!email) {
       return true
     }
 
@@ -49,11 +47,10 @@ const Form = ({ heading, saveForm }) => {
     setMessages([])
     if (isFormValid()) {
 
-      saveForm({ email, password }, setMessages)
+      saveForm({ email }, setMessages)
     }
 
     setEmail("")
-    setPassword("")
   }
 
   return (
@@ -68,13 +65,6 @@ const Form = ({ heading, saveForm }) => {
         id='email'
         value={email}
         onChange={setEmail}
-      />
-      <Input
-        label='Password'
-        type='password'
-        id='password'
-        value={password}
-        onChange={setPassword}
       />
       <Button
         data-testid="Save"

@@ -25,10 +25,10 @@ const List = styled.ul`
 
 const UserList = ({ users }) => (
   <List>
-    {users.map(({ email, password }, index) => (
+    {users.map(({ email, Id }, index) => (
       <Item data-testid="user-item" key={index}>
         <Heading>{email}</Heading>
-        <p>{password}</p>
+        <p>{Id}</p>
       </Item>
     ))}
   </List>
@@ -41,7 +41,7 @@ UserList.defaultProps = {
 UserList.propTypes = {
   users: arrayOf(shape({
     email: string.isRequired,
-    password: string.isRequired
+    Id: string.isRequired
   }))
 }
 

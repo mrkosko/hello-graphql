@@ -1,15 +1,14 @@
 import React, { Fragment, useState, useEffect } from 'react'
+import gql from "graphql-tag"
+import ApolloClient from "apollo-boost"
 import styled from 'styled-components'
 import { apiEndPoint } from 'config/apiConfig'
-import { placeHttpRequest } from 'util/httpRequest'
-import { resolveMessage } from 'util/resolveMessage'
 import { media } from 'ux/media'
 import GlobalStyle from 'ux/globalStyle'
 import Header from './components/Header'
 import Footer from './components/Footer'
 import Form from './components/Form'
 import UserList from './components/UserList'
-import Button from './components/Button'
 
 const Grid = styled.div`
   display: flex;
@@ -38,64 +37,63 @@ const ListWrapper = styled.div`
   }
 `
 
+const client = new ApolloClient({
+  uri: `${apiEndPoint}`
+});
+
 const App = () => {
 
   const [users, setUsers] = useState([])
 
-  const [currentPageNumber, setPageNumber] = useState(1)
-  const [currentHasPreviousPage, setHasPreviousPage] = useState(false)
-  const [currentHasNextPage, setHasNextPage] = useState(false)
-
   const loadUsers = async (pageNumber = 1) => {
-    const {
-      payload: { users, page, hasPreviousPage, hasNextPage }
-    } = await placeHttpRequest(`${apiEndPoint}/users?page=${pageNumber}`, 'get', {}, fetch)
 
-    setUsers(users)
-    setPageNumber(page)
-    setHasNextPage(hasNextPage)
-    setHasPreviousPage(hasPreviousPage)
+    client
+      .query({
+        query: gql`
+        {
+          users {
+            Id
+            email
+          }
+        }
+        `
+      })
+      .then(({data}) => 
+        setUsers(data.users));
   }
 
-  const registerUser = async ({ email, password }, onResponseMessageReceived = () => { }) => {
-    if (!email || !password)
+  const registerUser = async ({ email }, onResponseMessageReceived = () => { }) => {
+    if (!email)
       return
-    try {
-      await placeHttpRequest(`${apiEndPoint}/users`, 'post', { email, password }, fetch)
 
-      await loadUsers()
-    }
-    catch ({ responseMessages }) {
-      onResponseMessageReceived(responseMessages.map(resolveMessage))
-    }
+    client
+      .mutate({
+        mutation: gql`
+        mutation CreateUser {
+          createUser(userName: "${email}", password: "abc"){
+            userName
+          }
+        }
+        `
+      })
+      .then(d => loadUsers());
   }
 
   useEffect(() => {
     loadUsers()
   }, [])
 
-
   return (
     <Fragment>
       <GlobalStyle />
-      <Header heading='WorldRemit' />
+      <Header heading='GraphQL User App' />
       <Grid>
         <Form heading="Enter your details here" saveForm={registerUser} />
         <ListWrapper>
           <UserList users={users} />
-          <Button
-            onClick={() => loadUsers(currentPageNumber - 1)}
-            disabled={!currentHasPreviousPage}>
-            Previous
-          </Button>
-          <Button
-            onClick={() => loadUsers(currentPageNumber + 1)}
-            disabled={!currentHasNextPage}>
-            Next
-          </Button>
         </ListWrapper>
       </Grid>
-      <Footer text={`WorldRemit tech task ${new Date().getFullYear()}`} />
+      <Footer text={`GraphQL User App ${new Date().getFullYear()}`} />
     </Fragment>
   )
 }
