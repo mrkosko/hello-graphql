@@ -1,26 +1,24 @@
 import React from 'react'
-import ApolloClient from "apollo-boost"
-import { host } from 'config/apiConfig'
 import gql from "graphql-tag"
+import { Query } from "react-apollo"
 
-
-
-const client = new ApolloClient({
-  uri: host
-});
-
-client
-  .query({
-    query: gql`
+export default () => (
+  <Query
+    query={gql`
       {
         hello
       }
-    `
-  })
-  .then(result => console.log(result));
+    `}
+  >
+    {({ loading, error, data }) => {
+      if (loading) return <p>Loading...</p>;
+      if (error) return <p>Error :(</p>;
 
-export default () => (
-  <div>
-    Hello
-    </div>
-)
+      return (
+        <div>
+          {data.hello}
+        </div>
+      );
+    }}
+  </Query>
+);
