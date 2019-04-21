@@ -5,9 +5,9 @@ from flask_graphql import GraphQLView
 
 def create_app():
     app = Flask(__name__)
-    CORS(app)
+    CORS(app, resources={r'/*': {'origins': ['http://localhost:3000']}}) 
     
-    @app.route("/")
+    @app.route('/')
     def hello_world():
         return "Hello World!"
 
